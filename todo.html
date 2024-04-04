@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Submission with Sensitive Word Detection</title>
+    <style>
+        .feedback {
+            margin-bottom: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='todo.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Sensitive Information Detection System</h1>
+    {% if message %}
+    <p>{{ message }}</p> <!-- 显示处理后的信息 -->
+    {% endif %}
+    <form id="postForm" action="/" method="POST">
+        <div>
+            <label for="sensitiveInput">Content:</label>
+            <textarea id="sensitiveInput" name="postContent" rows="10" required></textarea>
+            <div id="contentFeedback" class="feedback"></div>
+        </div>
+        <input type="submit" value="Submit Post">
+    </form>
+</div>
+
+<!-- Custom Modal -->
+<div id="customModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalMessage"></p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='todo.js') }}"></script>
+</body>
+</html>
