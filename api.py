@@ -39,10 +39,10 @@ def sensitive_infor_of_string(string):
     pattern_em = re.compile(regex_em)
     
     # find match in the text
-    matches_sg = pattern_sg.findall(text)
-    matches_us = pattern_us.findall(text)
-    matches_cn = pattern_cn.findall(text)
-    matches_em = pattern_em.findall(text)
+    matches_sg = pattern_sg.findall(string)
+    matches_us = pattern_us.findall(string)
+    matches_cn = pattern_cn.findall(string)
+    matches_em = pattern_em.findall(string)
     
     sensitive_info = {'sg':[],'us':[],'cn':[],'email':[],'name':[],'address':[]}
     for match in matches_sg:
