@@ -128,6 +128,44 @@ class DistillBERTClass(torch.nn.Module):
 
 def is_toxic(text):
     # ---------------------- Using DistilBERT ---------------------------
+    # device = 'cpu'
+    # distillBERT_pretrained = DistilBertModel.from_pretrained("distilbert-base-uncased")
+    # model = DistillBERTClass(distillBERT_pretrained)
+    # model.to(device)
+    # model.load_state_dict(torch.load('distillbert_toxic.pth',  map_location=torch.device('cpu')))
+
+    # sample = text
+    # tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
+    # encoded_dict = tokenizer.encode_plus(
+    #     sample,                      # Input text
+    #     add_special_tokens = True, # Add '[CLS]' and '[SEP]'
+    #     max_length = 512,           # Pad & truncate all sentences
+    #     padding='max_length',
+    #     pad_to_max_length = True,  # Pad all to the max length of the model
+    #     truncation = True,
+    #     return_attention_mask = True,   # Construct attn. masks
+    #     return_tensors = 'pt',     # Return pytorch tensors
+    # ).to(device)
+
+    # input_ids = encoded_dict['input_ids']
+    # attention_mask = encoded_dict['attention_mask']
+
+    # model.eval()  # Put the model in evaluation mode
+
+    # with torch.no_grad():
+    #     outputs = model(input_ids, attention_mask=attention_mask)
+    #     prob = torch.sigmoid(outputs.data)
+    #     predicted_class = (prob > 0.5).int().item()
+    # print(f"Predicted class: {predicted_class}")
+
+
+    # ---------------------- Using Logistic Regression ---------------------------
+    # logistic_regression_model = joblib.load('lr_model.pkl')
+    # tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
+
+    # predicted_class = logistic_regression_model.predict(tfidf_vectorizer.transform([sample]))[0]
+
+    # ----------------------- Using ensemble -------------------------
     device = 'cpu'
     distillBERT_pretrained = DistilBertModel.from_pretrained("distilbert-base-uncased")
     model = DistillBERTClass(distillBERT_pretrained)
@@ -152,18 +190,27 @@ def is_toxic(text):
 
     model.eval()  # Put the model in evaluation mode
 
+    logistic_regression_model = joblib.load('lr_model.pkl')
+    tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
+
+    lr_prob = logistic_regression_model.predict_proba(tfidf_vectorizer.transform([text]))[0]
+    encoded_dict = tokenizer.encode_plus(
+        text,
+        add_special_tokens = True,
+        max_length = 512,
+        padding='max_length',
+        pad_to_max_length = True,
+        truncation = True,
+        return_attention_mask = True,
+        return_tensors = 'pt',
+    ).to(device)
+
+    input_ids = encoded_dict['input_ids']
+    attention_mask = encoded_dict['attention_mask']
     with torch.no_grad():
         outputs = model(input_ids, attention_mask=attention_mask)
-        prob = torch.sigmoid(outputs.data)
-        predicted_class = (prob > 0.5).int().item()
-    print(f"Predicted class: {predicted_class}")
-
-
-    # ---------------------- Using Logistic Regression ---------------------------
-    # logistic_regression_model = joblib.load('lr_model.pkl')
-    # tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
-
-    # predicted_class = logistic_regression_model.predict(tfidf_vectorizer.transform([sample]))[0]
+        bert_prob = torch.sigmoid(outputs.data).item()
+    predicted_class = int(((lr_prob[1] + bert_prob) / 2) > 0.5)
 
     return predicted_class
 
