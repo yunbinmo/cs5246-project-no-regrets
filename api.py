@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import numpy as np
 import subprocess
+import joblib
 import time
 import transformers
 import torch
@@ -96,8 +97,7 @@ def sensitive_infor_of_string(string):
 # result = sensitive_infor_of_string(text)
 # print(result)
 
-# ----------------- Load finetuned distillbert and do inference --------------------
-device = 'cpu'
+# ----------------- Load finetuned distillbert/logistic regression and do inference --------------------
 class DistillBERTClass(torch.nn.Module):
     def __init__(self, distillBERT):
         super(DistillBERTClass, self).__init__()
@@ -125,14 +125,15 @@ class DistillBERTClass(torch.nn.Module):
 
         output = self.classifier_2(pooler)
         return output
-    
-distillBERT_pretrained = DistilBertModel.from_pretrained("distilbert-base-uncased")
-model = DistillBERTClass(distillBERT_pretrained)
-model.to(device)
-model.load_state_dict(torch.load('distillbert_toxic.pth',  map_location=torch.device('cpu')))
 
 def is_toxic(text):
-    # Testing with a new sample
+    # ---------------------- Using DistilBERT ---------------------------
+    device = 'cpu'
+    distillBERT_pretrained = DistilBertModel.from_pretrained("distilbert-base-uncased")
+    model = DistillBERTClass(distillBERT_pretrained)
+    model.to(device)
+    model.load_state_dict(torch.load('distillbert_toxic.pth',  map_location=torch.device('cpu')))
+
     sample = text
     tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
     encoded_dict = tokenizer.encode_plus(
@@ -156,11 +157,16 @@ def is_toxic(text):
         prob = torch.sigmoid(outputs.data)
         predicted_class = (prob > 0.5).int().item()
     print(f"Predicted class: {predicted_class}")
+
+
+    # ---------------------- Using Logistic Regression ---------------------------
+    # logistic_regression_model = joblib.load('lr_model.pkl')
+    # tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
+
+    # predicted_class = logistic_regression_model.predict(tfidf_vectorizer.transform([sample]))[0]
+
     return predicted_class
 
-# text = "COCKSUCKER BEFORE YOU PISS AROUND ON MY WORK"
-# toxic_result = is_toxic(text)
-# print(toxic_result)
 
 # ----------------- Trying to detect other sensitive information --------------------
 def detect_sentence(sentence):
