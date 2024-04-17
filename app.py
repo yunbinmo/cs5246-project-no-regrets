@@ -5,16 +5,22 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    message = ""  # 初始化空消息
+    message = ""
+    post_content = ""  # initialization
     if request.method == 'POST':
         post_content = request.form['postContent']
-        # 在这里处理post_content
         # post_content += "loooooool"
-        print(post_content)
-        message = process_text(post_content)  # 模拟处理后的消息
-        # message = "数据已接收: " + process_text(post_content)  # 模拟处理后的消息
-    # 返回到HTML页面，带有处理后的消息
-    return render_template('todo.html', message=message)
+        # dummy message for testing
+        output = process_text(post_content)
+        message = "<b>Sensitive Information Detected:</b><br> Phone: {}<br>Email: {}<br>Name: {}<br>Address: {}<br>Disease: {}<br>Toxic sentence: {}".format(
+            '; '.join([key.upper() + ": " + ("None" if len(value) == 0 else (', '.join(value))) for key, value in list(output['sensitive_info'].items())[:3]]), 
+            ', '.join(output['sensitive_info']['email']), 
+            ', '.join(output['sensitive_info']['name']), 
+            ', '.join(output['sensitive_info']['address']),
+            ', '.join([str(o) for o in output['sensitive_info_disease']]),
+            'Yes (think again before posting!)' if output['toxic'] == 1 else 'No')
+    # render processing results
+    return render_template('todo.html', message=message, post_content=post_content)
 
 if __name__ == '__main__':
     app.run(debug=True)

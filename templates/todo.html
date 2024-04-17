@@ -10,18 +10,32 @@
         }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='todo.css') }}">
+    <script>
+        function showLoadingBar() {
+            var loadingBar = document.getElementById('loadingBar');
+            loadingBar.style.visibility = 'visible'; // Show the loading bar
+            loadingBar.style.width = '100%'; // Optional: Animate the bar to full width
+        }
+        
+        window.onload = function() {
+            var loadingBar = document.getElementById('loadingBar');
+            loadingBar.style.visibility = 'hidden'; // Hide the loading bar
+            loadingBar.style.width = '0%'; // Reset the bar width
+        };
+        </script>
 </head>
 <body>
 
 <div class="container">
     <h1>Sensitive Information Detection System</h1>
     {% if message %}
-    <p>{{ message }}</p> <!-- 显示处理后的信息 -->
+    <p>{{ message|safe }}</p> <!-- 显示处理后的信息 -->
     {% endif %}
-    <form id="postForm" action="/" method="POST">
+    <div class="loading-bar" id="loadingBar"></div>
+    <form id="postForm" action="/" method="POST" onsubmit="showLoadingBar()">
         <div>
             <label for="sensitiveInput">Content:</label>
-            <textarea id="sensitiveInput" name="postContent" rows="10" required></textarea>
+            <textarea id="sensitiveInput" name="postContent" rows="10" required>{{ post_content }}</textarea> <!-- 在这里添加了 post_content -->
             <div id="contentFeedback" class="feedback"></div>
         </div>
         <input type="submit" value="Submit Post">

@@ -94,3 +94,14 @@ input[type="submit"]:hover {
     color: red;
     margin-top: 10px;
 }
+
+.loading-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #3498db;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: width 8s;
+    visibility: hidden; /* Hidden by default */
+}

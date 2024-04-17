@@ -25,11 +25,9 @@ except OSError:
 
 # ----------------- Trying to detect sensitive information --------------------
 def sensitive_infor_of_string(string):
-    #regex_sg = r"(\+?65)?\s*?([\d]{4})\s*?([\d]{4})\b"   #sg
-    regex_sg = r"(?<!\d)(\+65)?\s*?(\d{8})\b"   
-    regex_us = r"(\(\d{3}\) |\d{3}-)?\d{3}-\d{4}"            #us
-    regex_cn = r"1[34578]\d{9}"     #China
-    #regex_cn = r"(\+86)?\s*?(\d{3,4})\s*?(\d{3})\b"  # China
+    regex_sg = r"(?<=\s)(?<!\d)(\+65)?\s*?(\d{8})(?!@)\b"   
+    regex_us = r"(?<=\s)(\(\d{3}\) |\d{3}-)?\d{3}-\d{4}(?!@)"            #us
+    regex_cn = r"(?<=\s)1[34578]\d{9}(?!@)"     #China
     regex_em = r"(?P<user>[\w.-]+)@(?P<domain>[\w.-]+)"  #email
     
 #     regex = [regex_sg,regex_us,regex_cn,regex_em]
@@ -281,6 +279,6 @@ if __name__ == '__main__':
 
     # sentence = 'she has Allergy.'
     # print(physcial_disease(sentence,True,'model'))
-    example_text = "Chris van is a great man and he lives in Singapore NUS,his phone number is 89438900 and email is e2313@wq.com,\
-    # he likes Einstein very much"
+    # Diadie Singh is a great man and he lives in Shanghai, his phone number is 89438900 and email is 31312121@wq.com,he likes Einstein very much
+    example_text = "Chris van is a great man and he lives in Singapore NUS,his phone number is 89438900 and email is e2313@wq.com, he likes Einstein very much."
     process_text(example_text)
