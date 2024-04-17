@@ -279,6 +279,6 @@ if __name__ == '__main__':
 
     # sentence = 'she has Allergy.'
     # print(physcial_disease(sentence,True,'model'))
-    # Diadie Singh is a great man and he lives in Shanghai, his phone number is 89438900 and email is 31312121@wq.com,he likes Einstein very much
+    # Diadie Singh is a great man and he lives in Shanghai, his phone number is 89438900 and email is 31312121@wq.com,he likes Einstein very much.
     example_text = "Chris van is a great man and he lives in Singapore NUS,his phone number is 89438900 and email is e2313@wq.com, he likes Einstein very much."
     process_text(example_text)
