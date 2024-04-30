@@ -33,3 +33,6 @@ To start up the flask app locally, run:
 ```bash
 python app.py
 ```
+
+## Citation
+If you use our work, please kindly make a citation, thank you!
